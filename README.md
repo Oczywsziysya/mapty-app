@@ -15,10 +15,10 @@ Mapty is a fictional web-application that allows users to store and map their wo
 
 This is a project from the Jonas Schmedtmann's JS course that is mainly intended for practicing previously learned OOP concepts. You can check the official DEMO version [here](https://mapty.netlify.app). Besides the core functionality, my version features a couple of new things (more details further).
 
-### Screenshots | Videos
+### Screenshots & Videos
 
 #### Desktop
-![](./videos/desktop-video.mp4)
+https://github.com/user-attachments/assets/8f812a3e-e45e-4a49-a69f-dbee5b5f2122
 
 ## My experience
 
