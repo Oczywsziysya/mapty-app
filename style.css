@@ -154,7 +154,7 @@ a:visited {
   
 }
 
-.form > .edition-mode-icon {
+.form > .edit-mode-icon {
   color: var(--color-brand--2);
 }
 

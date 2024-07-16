@@ -13,7 +13,7 @@ const DOM_inputElevation = document.querySelector('.form__input--elevation');
 const DOM_inputDate = document.querySelector('.form__input--date')
 const DOM_editIcon = document.querySelector('.edit-icon');
 const DOM_deleteIcon = document.querySelector('.delete-icon');
-const DOM_editIconInForm = document.querySelector('.edition-mode-icon');
+const DOM_editIconInForm = document.querySelector('.edit-mode-icon');
 const DOM_createIconInForm = document.querySelector('.creation-mode-icon');
 const DOM_map = document.getElementById('map');
 
@@ -28,18 +28,16 @@ class Workout {
     }
 
     get isPast() { // past workouts should be rendered with lower opacity, hence the getter, it simplifies things
-        return (this.creationDate - this.workoutDate > 0);
+        return (new Date() - this.workoutDate > 0);
     }
 }
 
 class RunningWorkout extends Workout {
+    type = "running";
+
     constructor(distance, duration, cadence, workoutDate, workoutCoords) {
         super(distance, duration, workoutDate, workoutCoords);
         this.cadence = cadence;
-    }
-
-    get type() {
-        return "running";
     }
 
     get pace() {
@@ -83,13 +81,11 @@ class RunningWorkout extends Workout {
 }
 
 class CyclingWorkout extends Workout {
+    type = "cycling";
+
     constructor(distance, duration, elevation, workoutDate, workoutCoords) {
         super(distance, duration, workoutDate, workoutCoords);
         this.elevation = elevation;
-    }
-
-    get type() {
-        return "cycling";
     }
 
     get speed() {
@@ -137,6 +133,10 @@ class App {
     #selectedCoords = {};
     #map;
     #beingEditedId = null;
+    #stringifyReplacer = function(key, value) {
+        if (key === "_mapPopup" || key === "_mapMarker") return null; // to ignore circular references
+        return value; // the map and marker properties will be rebuilt afterwards, so don't having them is not a problem at all
+    }
 
     constructor() {
         this._getLocation(); // app initializer
@@ -191,6 +191,24 @@ class App {
             DOM_createIconInForm.style.display = "initial";
             DOM_editIconInForm.style.display = "none";
             this._renderForm(mapEvent);
+        });
+
+        // get and build data from local storage
+        const flattenedWorkouts = JSON.parse(localStorage.getItem('workouts')); // array
+        if (!flattenedWorkouts) return;
+        flattenedWorkouts.forEach((workout) => {
+            let newWorkout;
+            switch (workout.type) { 
+                case "running":
+                    newWorkout = new RunningWorkout(workout.distance, workout.duration, workout.cadence, new Date(workout.workoutDate), {lat: workout.workoutCoords.lat, lng: workout.workoutCoords.lng});
+                    newWorkout.creationDate = new Date(workout.creationDate); // JSON stringify automatically converts dates to ISO strings
+                    break;
+                case "cycling":
+                    newWorkout = new CyclingWorkout(workout.distance, workout.duration, workout.elevation, new Date(workout.workoutDate), {lat: workout.workoutCoords.lat, lng: workout.workoutCoords.lng});
+                    newWorkout.creationDate = new Date(workout.creationDate);
+            }
+            this.#workouts.push(newWorkout);
+            this._renderWorkout(newWorkout);
         });
     }
 
@@ -267,6 +285,7 @@ class App {
             this.#beingEditedId = null; // stop edition mode
         } else this.#workouts.push(workout); // since there's no edition, workout go to the end of the array
 
+        localStorage.setItem('workouts', JSON.stringify(this.#workouts, this.#stringifyReplacer));
         return workout;
     }
 
@@ -316,6 +335,7 @@ class App {
             workout.mapMarker.bindPopup(workout.mapPopup).addTo(this.#map).openPopup(); // add marker with open popup
         } 
 
+        localStorage.setItem('workouts', JSON.stringify(this.#workouts, this.#stringifyReplacer));
     }
 
     /*
@@ -385,6 +405,8 @@ class App {
             DOM_editIconInForm.style.display = "none";
             DOM_createIconInForm.style.display = "initial";
         }
+
+        localStorage.setItem('workouts', JSON.stringify(this.#workouts, this.#stringifyReplacer));
     }
 }
 
