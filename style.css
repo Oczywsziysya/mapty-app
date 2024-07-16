@@ -213,6 +213,48 @@ a:visited {
   display: none;
 }
 
+.change-view-pane {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.change-view-pane div {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.change-view-pane div:hover {
+  cursor: pointer;
+  transform: scale(1.06);
+}
+
+.change-view-pane img {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
+
+.delete-all-icon {
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  color: red;
+  font-weight: 1000;
+}
+
+.delete-all-icon img {
+  width: 22px;
+  height: 22px;
+}
+
+.delete-all-icon::after {
+  content: "DELETE ALL WORKOUTS";
+  margin-left: 6px;
+}
+
 .copyright {
   margin-top: auto;
   font-size: 1.3rem;

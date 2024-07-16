@@ -4,6 +4,7 @@ const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 
 // DOM VARIABLES 
 const DOM_form = document.querySelector('.form');
+const DOM_changeViewPane = document.querySelector('.change-view-pane');
 const DOM_containerWorkouts = document.querySelector('.workouts');
 const DOM_inputType = document.querySelector('.form__input--type');
 const DOM_inputDistance = document.querySelector('.form__input--distance');
@@ -15,6 +16,7 @@ const DOM_editIcon = document.querySelector('.edit-icon');
 const DOM_deleteIcon = document.querySelector('.delete-icon');
 const DOM_editIconInForm = document.querySelector('.edit-mode-icon');
 const DOM_createIconInForm = document.querySelector('.creation-mode-icon');
+const DOM_deleteAllIcon = document.querySelector('.delete-all-icon');
 const DOM_map = document.getElementById('map');
 
 // CREATING THE CLASSES, ARCHITECTURE
@@ -163,6 +165,21 @@ class App {
 
             if (e.target.closest("div").classList.contains("edit-icon")) this._editWorkout(targetWorkoutObj);
             if (e.target.closest("div").classList.contains("delete-icon")) this._deleteWorkout(targetWorkoutObj);
+        });
+        DOM_deleteAllIcon.addEventListener("click", () => {
+            Array.from(document.querySelectorAll('li')).forEach((workout) => {
+                workout.remove();
+            }); // remove everything from DOM
+            this.#workouts.forEach((workout) => workout.mapMarker.remove()); // remove all markers
+
+            this.#workouts = []; // remove from workouts array
+            localStorage.setItem('workouts', JSON.stringify(this.#workouts, this.#stringifyReplacer));
+
+            // reset UI elements
+            DOM_form.reset();
+            DOM_form.classList.add("hidden");
+            DOM_editIconInForm.style.display = "none";
+            DOM_createIconInForm.style.display = "initial";
         });
     }
 
@@ -331,7 +348,7 @@ class App {
             previousSibling.insertAdjacentHTML("afterend", html); // render on list in the previous position
             workout.mapMarker.bindPopup(workout.mapPopup).addTo(this.#map).openPopup(); // render new marker
         } else {
-            DOM_form.insertAdjacentHTML("afterend", html); // not edition? just put it at the beginning of the list
+            DOM_changeViewPane.insertAdjacentHTML("afterend", html); // not edition? just put it at the beginning of the list
             workout.mapMarker.bindPopup(workout.mapPopup).addTo(this.#map).openPopup(); // add marker with open popup
         } 
 
