@@ -48,12 +48,37 @@
         </div>
         <div class="sort-icon">
           <img src="./assets/images/sort-icon.svg" alt="Sort icon">
-          <div class="sort-pane"></div>
+          <div class="sort-pane__arrow" style="display: none"></div>
+          <div class="sort-pane" style="display: none">
+            <div class="sort-pane__header">SORT</div>
+            <div class="sort-pane__description">Sort by field in ascending or descending order!</div>
+            <div class="sort-pane__category sort-pane__category--mode">
+              <div class="sort-pane__subheader">MODE</div>
+              <ul>
+                <li class="sort-pane__item">📈 Ascending</li>
+                <li class="sort-pane__item sort-pane__item--active">📉 Descending</li>
+              </ul>
+            <div class="sort-pane__category sort-pane__category--field">
+              <div class="sort-pane__subheader">FIELD</div>
+              <ul>
+                <li class="sort-pane__item">🛣 Distance</li>
+                <li class="sort-pane__item">⏱ Duration</li>
+                <li class="sort-pane__item">🗓️ Date</li>
+                <li class="sort-pane__item sort-pane__item--creation sort-pane__item--active">✍️ Creation</li>
+                <li class="sort-pane__item sort-pane__item--running" style="display: none">💥 Pace</li>
+                <li class="sort-pane__item sort-pane__item--running" style="display: none">🦶🏼 Cadence</li>
+                <li class="sort-pane__item sort-pane__item--cycling" style="display: none">💥 Speed</li>
+                <li class="sort-pane__item sort-pane__item--cycling" style="display: none">⛰ Elevation</li>
+              </ul>
+            </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <ul class="workouts">
         <form class="form hidden">
+          <div class="close-form-icon">&times;</div>
           <div class="mode-icon edit-mode-icon" style="display: none">EDIT MODE</div>
           <div class="mode-icon creation-mode-icon">CREATION MODE</div>
           <div class="form__row">

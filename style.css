@@ -167,6 +167,21 @@ a:visited {
   transition: all 0.5s, transform 1ms;
 }
 
+.form > .close-form-icon {
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  font-weight: 1000;
+  color: red;
+  font-size: 2.5rem;
+  transition: all 0.5s ease-in-out;
+}
+
+.form > .close-form-icon:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 .form > .mode-icon {
   position: absolute;
   bottom: 10px;
@@ -276,11 +291,11 @@ a:visited {
   margin-left: 6px;
 }
 
-.filter-icon {
+.filter-icon, .sort-icon {
   position: relative;
 }
 
-.filter-pane {
+.filter-pane, .sort-pane {
   position: absolute;
   z-index: 2;
   width: 250px;
@@ -293,7 +308,12 @@ a:visited {
   border-radius: 6px;
 }
 
-.filter-pane__arrow {
+.sort-pane {
+  left: initial;
+  right: 40px;
+}
+
+.filter-pane__arrow, .sort-pane__arrow {
   position: absolute;
   z-index: 2;
   width: 16px;
@@ -304,7 +324,12 @@ a:visited {
   top: 50%;
 }
 
-.filter-pane__header {
+.sort-pane__arrow {
+  left: initial;
+  right: 38px;
+}
+
+.filter-pane__header, .sort-pane__header {
   font-weight: 1000;
   font-size: 1.4rem;
   letter-spacing: 2px;
@@ -312,23 +337,23 @@ a:visited {
   margin-block-end: 4px;
 }
 
-.filter-pane__description {
+.filter-pane__description, .sort-pane__description {
   font-size: 1.16rem;
   margin-block-end: 10px;
 }
 
-.filter-pane__subheader {
+.filter-pane__subheader, .sort-pane__subheader {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--color-brand--1);
   text-transform: uppercase;
 }
 
-.filter-pane__category {
+.filter-pane__category, .sort-pane__category {
   margin-block: 4px;
 }
 
-.filter-pane ul {
+.filter-pane ul, .sort-pane ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -338,25 +363,19 @@ a:visited {
   padding-block: 4px;
 }
 
-.filter-pane__item {
+.filter-pane__item, .sort-pane__item {
   font-size: 1.2rem;
   padding: 3px 8px;
   border-radius: 16px;
   font-weight: 700;
 }
 
-.filter-pane__item:hover {
+.filter-pane__item:hover, .sort-pane__item:hover {
   cursor: pointer;
 }
 
-.filter-pane__item--active {
+.filter-pane__item--active, .sort-pane__item--active {
   background-color: hsl(152, 100%, 38%, 0.6);
-}
-
-
-.sort-pane {
-  position: absolute;
-  display: none;
 }
 
 .copyright {
