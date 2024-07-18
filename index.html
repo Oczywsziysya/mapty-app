@@ -22,7 +22,41 @@
   </head>
   <body>
     <div class="sidebar">
-      <img src="./assets/images/logo.png" alt="Logo" class="logo" />
+      <img src="./assets/images/logo.png" alt="Mapty Logo." class="logo" />
+
+      <div class="change-view-pane">
+        <div class="filter-icon">
+          <img src="./assets/images/filter-icon.svg" alt="Filter icon" />
+          <div class="filter-pane__arrow" style="display: none"></div>
+          <div class="filter-pane" style="display: none">
+            <div class="filter-pane__header">FILTER</div>
+            <div class="filter-pane__description">For each category you can choose one filter.</div>
+            <div class="filter-pane__category">
+              <div class="filter-pane__subheader">Type</div>
+              <ul>
+                <!--- the actual tags are wrapped with "---" because the JS logic will use this to split the string --->
+                <li class="filter-pane__item---running--- filter-pane__item">🏃‍♂️ Running</li>
+                <li class="filter-pane__item---cycling--- filter-pane__item">🚴‍♀️ Cycling</li>
+              </ul>
+            </div>
+            <div class="filter-pane__category">
+              <div class="filter-pane__subheader">Time</div>
+              <ul>
+                <li class="filter-pane__item---past--- filter-pane__item">🔙 Past</li>
+                <li class="filter-pane__item---future--- filter-pane__item">🔜 Future</li>
+                <li class="filter-pane__item---today--- filter-pane__item">🚨 Today</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="delete-all-icon">
+          <img src="./assets/images/delete-all-icon.svg" alt ="Delete all workouts icon">
+        </div>
+        <div class="sort-icon">
+          <img src="./assets/images/sort-icon.svg" alt="Sort icon">
+          <div class="sort-pane"></div>
+        </div>
+      </div>
 
       <ul class="workouts">
         <form class="form hidden">
@@ -69,12 +103,6 @@
           </div>
           <button class="form__btn">OK</button>
         </form>
-
-        <div class="change-view-pane">
-          <div class="filter-icon"><img src="./assets/images/filter-icon.svg" alt="Filter icon"></div>
-          <div class="delete-all-icon"><img src="./assets/images/delete-all-icon.svg" alt ="Delete all workouts icon"></div>
-          <div class="sort-icon"><img src="./assets/images/sort-icon.svg" alt="Sort icon"></div>
-        </div>
 
         <!-- <li class="workout workout--running" data-id="1234567890">
           <h2 class="workout__title">Running on April 14</h2>

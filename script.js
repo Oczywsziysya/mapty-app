@@ -17,6 +17,9 @@ const DOM_deleteIcon = document.querySelector('.delete-icon');
 const DOM_editIconInForm = document.querySelector('.edit-mode-icon');
 const DOM_createIconInForm = document.querySelector('.creation-mode-icon');
 const DOM_deleteAllIcon = document.querySelector('.delete-all-icon');
+const DOM_filterIcon = document.querySelector('.filter-icon');
+const DOM_filterPaneArrow = document.querySelector('.filter-pane__arrow');
+const DOM_filterPane = document.querySelector('.filter-pane');
 const DOM_map = document.getElementById('map');
 
 // CREATING THE CLASSES, ARCHITECTURE
@@ -31,6 +34,25 @@ class Workout {
 
     get isPast() { // past workouts should be rendered with lower opacity, hence the getter, it simplifies things
         return (new Date() - this.workoutDate > 0);
+    }
+
+    get tags() {
+        const tagsArray = [`${this.type}`] // initial tag
+
+        // tests for tags, add more as the need of new tags grows
+        if (new Date() - this.workoutDate > 0) {
+            tagsArray.push("past");
+        } else {
+            tagsArray.push("future"); 
+        }
+
+        if (this.workoutDate.getFullYear() === new Date().getFullYear() && this.workoutDate.getMonth() === new Date().getMonth() && this.workoutDate.getDate() === new Date().getDate()) {
+            tagsArray.push("today");
+        }
+
+        // ------------
+
+        return (tagsArray.toSorted());
     }
 }
 
@@ -135,6 +157,8 @@ class App {
     #selectedCoords = {};
     #map;
     #beingEditedId = null;
+    #currentTagsArray = []; // this array is updated every time the user changes the filter options
+    // in the _renderWorkout function, this array will determine whether the workout obj passed as argument will be rendered or removed;
     #stringifyReplacer = function(key, value) {
         if (key === "_mapPopup" || key === "_mapMarker") return null; // to ignore circular references
         return value; // the map and marker properties will be rebuilt afterwards, so don't having them is not a problem at all
@@ -145,6 +169,8 @@ class App {
         
         // event listeners
         DOM_inputType.addEventListener("change", this._toggleCadenceElevation.bind(this));
+
+        // why an arrow function? because it'll take the outer this, which is exactly what we need
         DOM_form.addEventListener("submit", (e) => {            
             e.preventDefault();
             const newWorkout = (this.#beingEditedId) ? this._newWorkout(true) : this._newWorkout();
@@ -156,9 +182,11 @@ class App {
             DOM_form.classList.add("hidden"); // the transition lasts 1 second
             setTimeout(() => DOM_form.style.display = "grid", 1000); // so we have to add the grid back only after 1sec
         });
-        // why an arrow function? because it'll take the outer this, which is exactly what we need
+        
         DOM_containerWorkouts.addEventListener("click", this._moveToWorkout.bind(this));
-        DOM_containerWorkouts.addEventListener("click", (e) => { // edition and deletion
+
+        // edition and deletion buttons handler
+        DOM_containerWorkouts.addEventListener("click", (e) => { 
             const targetWorkoutDOM = e.target.closest(".workout");
             if (!targetWorkoutDOM) return;
             const targetWorkoutObj = this.#workouts.find((workout) => targetWorkoutDOM.dataset.id == workout.creationDate.getTime());
@@ -166,6 +194,7 @@ class App {
             if (e.target.closest("div").classList.contains("edit-icon")) this._editWorkout(targetWorkoutObj);
             if (e.target.closest("div").classList.contains("delete-icon")) this._deleteWorkout(targetWorkoutObj);
         });
+
         DOM_deleteAllIcon.addEventListener("click", () => {
             Array.from(document.querySelectorAll('li')).forEach((workout) => {
                 workout.remove();
@@ -180,6 +209,47 @@ class App {
             DOM_form.classList.add("hidden");
             DOM_editIconInForm.style.display = "none";
             DOM_createIconInForm.style.display = "initial";
+        });
+
+        // filters logic, events delegated to the filter pane
+        DOM_filterPane.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("filter-pane__item")) return; // guard clause;
+            
+            if (e.target.classList.contains("filter-pane__item--active")) { // if click on already active filter, remove active class and remove tag from tagsArray
+                e.target.classList.remove("filter-pane__item--active");
+                const tag = e.target.getAttribute("class").split('---')[1];
+                const index = this.#currentTagsArray.findIndex((tagInArray) => tagInArray === tag);
+                this.#currentTagsArray.splice(index, 1);
+            } else {
+                // this block guarantees that there's only one filter active by category
+                // e.target.closest("ul") will retrieve the container that represents the category to which the clicked filter belongs to
+                Array.from(e.target.closest("ul").querySelectorAll(".filter-pane__item")).forEach((item) => {
+                    item.classList.remove("filter-pane__item--active");
+                    const tag = item.getAttribute("class").split('---')[1];
+                    const index = this.#currentTagsArray.findIndex((tagInArray) => tagInArray === tag);
+                    if (index !== -1) this.#currentTagsArray.splice(index, 1);
+                });
+
+                // since e.target was not active before, after making all other filters in that category inactive, make e.target active
+                e.target.classList.add("filter-pane__item--active");
+                this.#currentTagsArray.push(e.target.getAttribute("class").split('---')[1]);
+            }
+
+            Array.from(DOM_containerWorkouts.querySelectorAll(".workout")).forEach((workout) => workout.remove()); // remove all workouts from DOM
+            this.#workouts.forEach((workout) => this._renderWorkout(workout));
+            // render them again, but the new filters will be taken into consideration
+        });
+
+        // OPEN & HIDE FILTER PANE
+        DOM_filterIcon.addEventListener("click", (e) => {
+            DOM_filterPane.style.display = "unset";
+            DOM_filterPaneArrow.style.display = "unset";
+        });
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".filter-pane") && !e.target.closest(".filter-icon")) {
+                DOM_filterPane.style.display = "none";
+                DOM_filterPaneArrow.style.display = "none";
+            }
         });
     }
 
@@ -306,7 +376,13 @@ class App {
         return workout;
     }
 
-    _renderWorkout(workout) {        
+    _renderWorkout(workout) {
+        if (this.#currentTagsArray.length !== 0 && !this.#currentTagsArray.every((tag) => workout.tags.includes(tag))) {
+            workout.mapMarker.remove(); // the markers that are not according to the filters should have their markers removed from the map!
+            return;
+        }
+        // if the workout doesn't satisfy the filter conditions, it should not be rendered
+        
         const type = workout.type;
         const icon1 = (type === "running") ? "🏃‍♂️" : (type === "cycling") ? "🚴‍♀️" : "";
         const icon2 = (type === "running") ? "🦶🏼" : (type === "cycling") ? "⛰" : "";
@@ -348,7 +424,7 @@ class App {
             previousSibling.insertAdjacentHTML("afterend", html); // render on list in the previous position
             workout.mapMarker.bindPopup(workout.mapPopup).addTo(this.#map).openPopup(); // render new marker
         } else {
-            DOM_changeViewPane.insertAdjacentHTML("afterend", html); // not edition? just put it at the beginning of the list
+            DOM_form.insertAdjacentHTML("afterend", html); // not edition? just put it at the beginning of the list
             workout.mapMarker.bindPopup(workout.mapPopup).addTo(this.#map).openPopup(); // add marker with open popup
         } 
 
