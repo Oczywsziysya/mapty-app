@@ -1,3 +1,5 @@
+@font-face {font-family: "Manrope"; src: url("./assets/fonts/manrope.ttf")}
+
 :root {
   --color-brand--1: #ffb545;
   --color-brand--2: #00c46a;

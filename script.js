@@ -196,7 +196,7 @@ class App {
         });
 
         DOM_deleteAllIcon.addEventListener("click", () => {
-            Array.from(document.querySelectorAll('li')).forEach((workout) => {
+            Array.from(DOM_containerWorkouts.querySelectorAll('li.workout')).forEach((workout) => {
                 workout.remove();
             }); // remove everything from DOM
             this.#workouts.forEach((workout) => workout.mapMarker.remove()); // remove all markers
