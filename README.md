@@ -48,6 +48,6 @@ I added some modifications and features to the project as well:
 ## Pending features
 
 - [x] Fix the problem with `JSON.stringify()` that was described previously, and then finally add a functional and useful local storage for storing workout data in the browser.
-- [ ] Add filters for the workout list, so that the user can filter by type of activty (running or cycling) and see only past or only future workouts.
+- [x] Add filters for the workout list, so that the user can filter by type of activity (running or cycling) and see only past or only future workouts.
 - [ ] Add a sorting feature that will allow the user to sort by field (distance, duration, speed/pace, etc.) in ascending or descending order.
 - [ ] Make the application responsive and mobile-friendly.
